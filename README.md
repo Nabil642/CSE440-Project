@@ -4,7 +4,7 @@
 
 Enter clues about a jewel heist. Watch a Bayesian Network turn them into a live-updating probability of guilt for each suspect — no black box, every table is on display.
 
-> Built as an AI coursework project exploring probabilistic graphical models, and adapted from the [ClueChain](https://github.com/nipunsaif/ClueChain) mystery-solver concept.
+> An AI coursework project exploring probabilistic graphical models through an interactive detective game.
 
 ---
 
@@ -85,7 +85,7 @@ Core dependencies actually used by the app:
 - **`pandas`** — formatting probability tables for display
 - **`graphviz`** *(optional)* — renders the network diagram; the app still runs without it, just without the picture. Also requires the [Graphviz system binaries](https://graphviz.org/download/) to be installed separately from the Python package.
 
-`requirements.txt` also carries a few extras (`numpy`, `networkx`, `matplotlib`, `ipykernel`, `jupyter`) inherited from the original project scaffolding — handy if you want to prototype the network in a notebook, but not required to run `main.py` itself.
+`requirements.txt` also includes a few extras (`numpy`, `networkx`, `matplotlib`, `ipykernel`, `jupyter`) that aren't required to run `main.py` itself, but are handy if you want to prototype or explore the network in a notebook.
 
 Python 3.9+ recommended.
 
@@ -94,7 +94,7 @@ Python 3.9+ recommended.
 Ideas for taking this further:
 
 - Add a `MotiveC` node or other clues specific to the Velvet Fox
-- Let users pick between multiple mystery scenarios (a `data/` folder of alternate cases already exists as a starting point)
+- Let users pick between multiple mystery scenarios by building out a library of alternate cases
 - Add a "sensitivity analysis" view showing which clue would most shift the verdict if answered
 - Persist a case log so past investigations can be reviewed
 
@@ -109,3 +109,13 @@ Ideas for taking this further:
 ## 📄 License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+## 👥 Team
+
+This project was developed by:
+
+- Tasnif Gaffar Pronoy
+- Md. Nazibul Islam Nabil
+- Zinat Shaharin Mim
+- Nazifa Tahsin
+- Jannat-a-habib-baishakhi
