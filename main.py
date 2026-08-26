@@ -1,4 +1,79 @@
 # ============================================================================
+# PART 2 - Contributor: Md. Nazibul Islam Nabil
+# ============================================================================
+# ============================================================================
+# BUILD MODEL AND INFERENCE ENGINE
+# ============================================================================
+# model      -> the DiscreteBayesianNetwork (structure + probability tables)
+# inference  -> pgmpy's VariableElimination engine, which will do the actual
+#               Bayesian math when we ask it a question below.
+model = None
+inference = None
+model_built = False
+graph_viz_object = None
+
+try:
+    model = build_bayesian_network()
+    inference = VariableElimination(model)
+    model_built = True
+    if graphviz and model:
+        graph_viz_object = create_graphviz_plot(model)
+
+except ValueError as e:
+    st.error(f"Error building the Bayesian Network: {e}")
+except Exception as e:
+    st.error(f"An unexpected error occurred during model setup: {e}")
+
+
+# ============================================================================
+# DISPLAY NETWORK STRUCTURE
+# ============================================================================
+if model_built and graph_viz_object:
+    st.subheader("🧭 The Network Behind the Investigation")
+    st.markdown("""
+    This graph is the entire "case file" the engine reasons with. Every arrow means
+    *"the true culprit's identity statistically shapes this clue."*
+    - An arrow from **Who Did It? → a clue box** means the guilty party's identity directly
+      influences how that clue tends to turn out (e.g. a professional thief is more likely to
+      force the vault than an insider with a key).
+    - There are **no arrows between the clue boxes themselves** — the model assumes clues are
+      only related to each other *through* who the culprit is. This "one hidden cause, many
+      visible effects" shape is exactly the structure used in a **Naive Bayes classifier**,
+      just applied to detective work instead of spam filtering.
+    - A consequence of that shape: `ForcedEntry` is conditionally independent of `AlibiA`
+      *given* `GuiltyParty` — once you know who did it, knowing whether the vault was forced
+      tells you nothing extra about the Heiress's alibi.
+    """)
+    try:
+        st.graphviz_chart(graph_viz_object)
+    except Exception as e:
+        st.error(f"Failed to render Graphviz chart: {e}")
+
+    # Educational reveal: let the player peek at the actual probability
+    # tables driving the graph above, instead of leaving the math a black box.
+    with st.expander("🧮 Peek at the Math — Conditional Probability Tables"):
+        st.markdown(
+            "Each arrow above is backed by a small table like these. A column tells you "
+            "*\"if this suspect were guilty, how likely is this outcome?\"* — the "
+            "**opposite** direction from what we actually want. Entering evidence below "
+            "and clicking **Solve** is what lets the engine flip these around into "
+            "*\"given this evidence, how likely is each suspect?\"* via Bayes' theorem."
+        )
+        for cpd in model.get_cpds():
+            parents = cpd.get_evidence()
+            heading = f"P({cpd.variable} | {', '.join(parents)})" if parents else f"P({cpd.variable})  — the prior"
+            st.markdown(f"**{heading}**")
+            st.dataframe(cpd_to_dataframe(cpd), width='stretch')
+
+    st.markdown("---")
+elif model_built and not graphviz:
+    st.markdown("---")
+
+
+
+
+
+# ============================================================================
 # PART 3 - Contributor: Nazifa Tahsin
 # ============================================================================
 # ============================================================================
