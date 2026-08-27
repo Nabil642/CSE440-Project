@@ -76,9 +76,6 @@ st.markdown("Using Bayesian Networks to catch whoever stole **The Star of Midnig
 st.markdown("---")
 
 
-
-
-
 # ============================================================================
 # PART 2 - Contributor: Md. Nazibul Islam Nabil
 # ============================================================================
@@ -149,9 +146,6 @@ if model_built and graph_viz_object:
     st.markdown("---")
 elif model_built and not graphviz:
     st.markdown("---")
-
-
-
 
 
 # ============================================================================
@@ -251,11 +245,6 @@ fp_input = fp_options[fp_input_display]
 sf_input_display = st.sidebar.selectbox("8. Useful security footage?",
                                          options=list(evidence_options.keys()), key="sf")
 sf_input = evidence_options[sf_input_display]
-
-
-
-
-
 
 
 # ============================================================================
@@ -375,3 +364,42 @@ if model_built:
         except Exception as e:
             st.error(f"An unexpected error occurred during inference: {e}")
             st.error("Details: " + str(e))
+
+# ============================================================================
+# PART 5 - Contributor: Jannat-a-habib-baishakhi
+# ============================================================================
+    else:
+        # No clues submitted yet this run — show the prior distribution so
+        # the page never feels empty.
+        st.info("Enter clues in the sidebar and click **Solve the Mystery**.")
+        try:
+            if inference is None:
+                st.error("Inference engine not initialized. Cannot show priors.")
+            else:
+                prior_gp = inference.query(variables=['GuiltyParty'])  # No evidence => the raw priors
+                st.subheader("Initial (Prior) Probability of Guilt")
+
+                prior_df = pd.DataFrame({
+                    'Code': prior_gp.state_names['GuiltyParty'],
+                    'Probability': prior_gp.values,
+                })
+                prior_df['Suspect'] = prior_df['Code'].map(SUSPECT_NAMES)
+                display_df = prior_df[['Suspect', 'Probability']].copy()
+                display_df['Probability'] = display_df['Probability'].map('{:.2%}'.format)
+                st.dataframe(display_df, width='stretch', hide_index=True)
+
+                chart_data = pd.DataFrame(
+                    prior_df['Probability'].values,
+                    index=prior_df['Suspect'].values,
+                    columns=['Probability']
+                )
+                st.bar_chart(chart_data)
+        except Exception as e:
+            st.error(f"An error occurred while calculating prior probabilities: {e}")
+
+else:
+    st.warning("The Bayesian Network model could not be built. Please check console/logs for errors. Inference is disabled.")
+
+
+st.markdown("---")
+st.markdown("Built using `pgmpy`, `streamlit`, and `graphviz`. 💎 *Bayes Watch* — because every clue is a witness, and Bayes is the interrogator.")
