@@ -1,4 +1,85 @@
 # ============================================================================
+# PART 1 - Contributor: Zinat Shaharin Mim
+# ============================================================================
+# main.py
+# ============================================================================
+#  BAYES WATCH: THE CASE OF THE VANISHING SAPPHIRE
+#  A Bayesian Network mystery solver — Streamlit front end.
+# ============================================================================
+# This file is ONLY concerned with the interface: laying out the page,
+# collecting the player's clues, and displaying results. All of the actual
+# Bayesian Network (structure + probability tables) lives in
+# supports/mystery_solver.py, which this file imports and calls.
+
+import streamlit as st
+import pandas as pd
+from pgmpy.inference import VariableElimination
+
+# --- Import the game engine (structure + CPDs live in supports/) -----------
+try:
+    from supports.mystery_solver import (
+        build_bayesian_network,
+        create_graphviz_plot,
+        cpd_to_dataframe,
+    )
+except ModuleNotFoundError:
+    st.error(
+        "ERROR: Could not find the 'supports/mystery_solver.py' module. "
+        "Please ensure the file structure is correct (main.py sits next to a "
+        "'supports/' folder containing an empty '__init__.py')."
+    )
+    st.stop()
+except ImportError as e:
+    st.error(f"ERROR importing from 'supports.mystery_solver': {e}. Check dependencies within mystery_solver.py.")
+    st.stop()
+
+# Graphviz is optional — the app should still run without it, just without
+# the network diagram.
+try:
+    import graphviz
+except ImportError:
+    st.warning(
+        "Graphviz library not found. Visualization disabled. To enable, install it "
+        "(`pip install graphviz`) and the Graphviz system tools "
+        "(see https://graphviz.org/download/)."
+    )
+    graphviz = None
+
+
+# ============================================================================
+# THEME / FLAVOR CONSTANTS
+# ============================================================================
+# Centralizing the story text and suspect names here means the whole case
+# could be re-themed again later just by editing this one block — the
+# Bayesian logic in supports/mystery_solver.py never has to change.
+
+APP_TITLE = "💎 Bayes Watch: The Case of the Vanishing Sapphire"
+
+# Maps the internal suspect codes (used throughout the Bayesian network) to
+# the flavorful display names shown in the UI.
+SUSPECT_NAMES = {
+    'A': 'Lady Odalys Voss — The Heiress',
+    'B': 'Jenkins — The Butler',
+    'C': 'The Velvet Fox — The Jewel Thief',
+}
+SUSPECT_EMOJI = {'A': '👑', 'B': '🎩', 'C': '🦊'}
+SUSPECT_COLOR = {'A': '#D4AF37', 'B': '#9CA3AF', 'C': '#7C3AED'}  # gold / silver / velvet-purple
+
+
+# ============================================================================
+# PAGE CONFIG + HEADER
+# ============================================================================
+st.set_page_config(page_title="Bayes Watch: The Vanishing Sapphire", page_icon="💎", layout="wide")
+
+st.title(APP_TITLE)
+st.markdown("Using Bayesian Networks to catch whoever stole **The Star of Midnight**.")
+st.markdown("---")
+
+
+
+
+
+# ============================================================================
 # PART 2 - Contributor: Md. Nazibul Islam Nabil
 # ============================================================================
 # ============================================================================
